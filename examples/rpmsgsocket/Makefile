@@ -1,6 +1,5 @@
 ############################################################################
-# apps/examples/watched/Make.defs
-# Adds selected applications to apps/ build
+# apps/examples/rpmsgsocket/Makefile
 #
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
@@ -17,8 +16,15 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 #
-############################################################################/
+############################################################################
 
-ifneq ($(CONFIG_EXAMPLES_WATCHED),)
-CONFIGURED_APPS += $(APPDIR)/examples/watched
-endif
+include $(APPDIR)/Make.defs
+
+MAINSRC = rpsock_client.c rpsock_server.c
+
+PROGNAME = rpsock_client rpsock_server
+PRIORITY = SCHED_PRIORITY_DEFAULT
+STACKSIZE = $(CONFIG_DEFAULT_TASK_STACKSIZE)
+MODULE = $(CONFIG_EXAMPLES_RPMSGSOCKET)
+
+include $(APPDIR)/Application.mk
