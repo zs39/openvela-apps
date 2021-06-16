@@ -1,5 +1,5 @@
 /****************************************************************************
- * canutils/libobd2/obd2.c
+ * apps/canutils/libobd2/obd2.c
  *
  *   Copyright (C) 2017 Alan Carvalho de Assis. All rights reserved.
  *   Author: Alan Carvalho de Assis <acassis@gmail.com>

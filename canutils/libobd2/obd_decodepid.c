@@ -1,5 +1,5 @@
 /****************************************************************************
- * canutils/libobd2/obd_decodepid.c
+ * apps/canutils/libobd2/obd_decodepid.c
  *
  *   Copyright (C) 2017 Alan Carvalho de Assis. All rights reserved.
  *   Author: Alan Carvalho de Assis <acassis@gmail.com>
