@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/apa102/apa102_main.c
+ * apps/examples/apa102/apa102_main.c
  *
  *   Copyright (C) 2017 Gregory Nutt. All rights reserved.
  *   Copyright (c) 2015-2017 Pololu Corporation.

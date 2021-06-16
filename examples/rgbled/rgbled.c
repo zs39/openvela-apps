@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/rgbled/rgbled.c
+ * apps/examples/rgbled/rgbled.c
  *
  *   Copyright (C) 2016 Gregory Nutt. All rights reserved.
  *   Author: Alan Carvalho de Assis <acassis@gmail.com>

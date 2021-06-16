@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/hello/gps_main.c
+ * apps/examples/hello/gps_main.c
  *
  *   Copyright (C) 2018 Gregory Nutt. All rights reserved.
  *   Author: Alan Carvalho de Assis <acassis@gmail.com>

@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/rfid_readuid/rfid_readuid.c
+ * apps/examples/rfid_readuid/rfid_readuid.c
  *
  *   Copyright (C) 2016 Gregory Nutt. All rights reserved.
  *   Author: Alan Carvalho de Assis <acassis@gmail.com>

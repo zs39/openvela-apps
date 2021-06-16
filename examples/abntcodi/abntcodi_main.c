@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/hello/abntcodi_main.c
+ * apps/examples/hello/abntcodi_main.c
  *
  *   Copyright (C) 2019 Gregory Nutt. All rights reserved.
  *   Author: Alan Carvalho de Assis <acassis@gmail.com>

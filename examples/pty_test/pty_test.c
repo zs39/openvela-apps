@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/pty_test/pty_test.c
+ * apps/examples/pty_test/pty_test.c
  *
  *   Copyright (C) 2016, Gregory Nutt. All rights reserved.
  *   Author: Alan Carvalho de Assisi <acassis@gmail.com>
