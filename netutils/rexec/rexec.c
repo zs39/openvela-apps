@@ -66,15 +66,14 @@ static int do_rexec(FAR struct rexec_arg_s *arg);
 static void usage(FAR const char *progname)
 {
   fprintf(stderr, "Usage: %s [-u user] [-H host] [-p password] "
-                  "[-P port] [-4|-6|-r] command\n", progname);
+                  "[-P port] [-4|-6] command\n", progname);
   fprintf(stderr, "Remote Execution Client:\n"
                   "  -u, Specify the user, default is \\0\n"
                   "  -H, Specify the hostname\n"
                   "  -p, Specify the password, default is \\0\n"
                   "  -P, Specify the port to connect to, default is 512\n"
                   "  -4, Specify address family AF_INET(default)\n"
-                  "  -6, Specify address family AF_INET6\n"
-                  "  -r, Specify address family AF_RPMSG\n");
+                  "  -6, Specify address family AF_INET6\n");
   exit(EXIT_FAILURE);
 }
 
@@ -124,7 +123,7 @@ int main(int argc, FAR char **argv)
   arg.port = REXEC_SERVER_PORT;
   arg.af = AF_INET;
 
-  while ((option = getopt(argc, argv, "u:H:p:P:46r")) != ERROR)
+  while ((option = getopt(argc, argv, "u:H:p:P:46")) != ERROR)
     {
       switch (option)
         {
@@ -145,9 +144,6 @@ int main(int argc, FAR char **argv)
             break;
           case '6':
             arg.af = AF_INET6;
-            break;
-          case 'r':
-            arg.af = AF_RPMSG;
             break;
           default:
             usage(argv[0]);
