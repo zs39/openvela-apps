@@ -113,7 +113,7 @@ static void parse_commandline(int argc, FAR char **argv,
 {
   int ch;
 
-  memset(info, 0, sizeof(FAR struct ramspeed_s));
+  memset(info, 0, sizeof(struct ramspeed_s));
   info->repeat_num = 100;
 
   if (argc < 7)
