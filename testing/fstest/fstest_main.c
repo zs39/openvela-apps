@@ -106,6 +106,7 @@ static char g_mountdir[CONFIG_TESTING_FSTEST_MAXNAME] =
 static int g_nfiles;
 static int g_ndeleted;
 static int g_nfailed;
+static bool g_media_full;
 
 static struct mallinfo g_mmbefore;
 static struct mallinfo g_mmprevious;
@@ -122,18 +123,13 @@ static struct mallinfo g_mmafter;
 static void fstest_showmemusage(struct mallinfo *mmbefore,
                                 struct mallinfo *mmafter)
 {
-  printf("VARIABLE  BEFORE   AFTER    DELTA\n");
-  printf("======== ======== ======== ========\n");
-  printf("arena    %8x %8x %8x\n", mmbefore->arena   , mmafter->arena,
-                                   mmafter->arena    - mmbefore->arena);
-  printf("ordblks  %8d %8d %8d\n", mmbefore->ordblks , mmafter->ordblks,
-                                   mmafter->ordblks  - mmbefore->ordblks);
-  printf("mxordblk %8x %8x %8x\n", mmbefore->mxordblk, mmafter->mxordblk,
-                                   mmafter->mxordblk - mmbefore->mxordblk);
-  printf("uordblks %8x %8x %8x\n", mmbefore->uordblks, mmafter->uordblks,
-                                   mmafter->uordblks - mmbefore->uordblks);
-  printf("fordblks %8x %8x %8x\n", mmbefore->fordblks, mmafter->fordblks,
-                                   mmafter->fordblks - mmbefore->fordblks);
+  printf("VARIABLE  BEFORE   AFTER\n");
+  printf("======== ======== ========\n");
+  printf("arena    %8x %8x\n", mmbefore->arena,    mmafter->arena);
+  printf("ordblks  %8d %8d\n", mmbefore->ordblks,  mmafter->ordblks);
+  printf("mxordblk %8x %8x\n", mmbefore->mxordblk, mmafter->mxordblk);
+  printf("uordblks %8x %8x\n", mmbefore->uordblks, mmafter->uordblks);
+  printf("fordblks %8x %8x\n", mmbefore->fordblks, mmafter->fordblks);
 }
 
 /****************************************************************************
@@ -204,7 +200,7 @@ static bool fstest_checkexist(FAR struct fstest_filedesc_s *file)
 
   for (i = 0; i < CONFIG_TESTING_FSTEST_MAXOPEN; i++)
     {
-      if (&g_files[i] != file && g_files[i].name &&
+      if (!g_files[i].deleted && &g_files[i] != file &&
           strcmp(g_files[i].name, file->name) == 0)
         {
           ret = true;
@@ -456,7 +452,11 @@ static inline int fstest_wrfile(FAR struct fstest_filedesc_s *file)
             {
               continue;
             }
-          else if (errcode != ENOSPC)
+          else if (errcode == ENOSPC)
+            {
+              g_media_full = true;
+            }
+          else
             {
               printf("ERROR: Failed to write file: %d\n", errcode);
               printf("  File name:    %s\n", file->name);
@@ -513,6 +513,8 @@ static int fstest_fillfs(void)
 
   /* Create a file for each unused file structure */
 
+  g_media_full = false;
+
   for (i = 0; i < CONFIG_TESTING_FSTEST_MAXOPEN; i++)
     {
       file = &g_files[i];
@@ -531,6 +533,11 @@ static int fstest_fillfs(void)
           printf("  Created file %s\n", file->name);
 #endif
           g_nfiles++;
+
+          if (g_media_full)
+            {
+              break;
+            }
         }
     }
 
@@ -655,7 +662,7 @@ static inline int fstest_rdfile(FAR struct fstest_filedesc_s *file)
 
   /* Try reading past the end of the file */
 
-  nbytesread = fstest_rdblock(fd, file, ntotalread, 1024);
+  nbytesread = fstest_rdblock(fd, file, ntotalread, 1024) ;
   if (nbytesread > 0)
     {
       printf("ERROR: Read past the end of file\n");
@@ -899,7 +906,6 @@ static int fstest_delallfiles(void)
     }
 
   g_nfiles = 0;
-  g_nfailed = 0;
   g_ndeleted = 0;
   return OK;
 }
