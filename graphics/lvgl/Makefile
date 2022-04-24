@@ -76,4 +76,8 @@ distclean::
 	$(call DELDIR, $(LVGL_UNPACKNAME))
 	$(call DELFILE, $(LVGL_TARBALL))
 
+ifneq ($(CONFIG_LV_ASSERT_HANDLER_INCLUDE), "")
+CFLAGS += "-DLV_ASSERT_HANDLER=ASSERT(0);"
+endif
+
 include $(APPDIR)/Application.mk
