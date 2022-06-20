@@ -71,6 +71,10 @@
                         UNAME_MACHINE | UNAME_PLATFORM)
 #endif
 
+#ifndef CONFIG_NSH_PROC_MOUNTPOINT
+#  define CONFIG_NSH_PROC_MOUNTPOINT "/proc"
+#endif
+
 /****************************************************************************
  * Private Data
  ****************************************************************************/
