@@ -622,7 +622,7 @@ int cmd_uname(FAR struct nsh_vtbl_s *vtbl, int argc, char **argv)
               nsh_output(vtbl, " ");
             }
 
-          nsh_output(vtbl, str);
+          nsh_output(vtbl, "%s", str);
           first = false;
         }
     }
