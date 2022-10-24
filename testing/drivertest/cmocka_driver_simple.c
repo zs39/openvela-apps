@@ -1,5 +1,5 @@
 /****************************************************************************
- * apps/examples/tcp_ipc_server/protocol.h
+ * apps/testing/drivertest/cmocka_driver_simple.c
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -18,24 +18,46 @@
  *
  ****************************************************************************/
 
-#ifndef __APPS_EXAMPLES_SERVER_TCP_PROTOCOL_H
-#define __APPS_EXAMPLES_SERVER_TCP_PROTOCOL_H
+/****************************************************************************
+ * Included Files
+ ****************************************************************************/
+#include <stdarg.h>
+#include <stddef.h>
+#include <setjmp.h>
+#include <stdint.h>
+#include <cmocka.h>
 
 /****************************************************************************
- * Public Types
+ * Private Functions
  ****************************************************************************/
 
-typedef struct
+static void test_case_01(void **state)
 {
-  unsigned char opcode;
-  unsigned char msg_size;
-  unsigned char msg[12];
-} protocolo_ipc;
+  (void) state;
+  assert_int_equal(0, 0);
+}
+
+static void test_case_02(void **state)
+{
+  (void)state;
+  assert_string_not_equal("hello", "world");
+}
 
 /****************************************************************************
- * Public Function Prototypes
+ * Public Functions
  ****************************************************************************/
 
-void send_msg_to_lpwan (unsigned char *msg, protocolo_ipc *pt_protocol);
+/****************************************************************************
+ * cmocka_driver_simple_main
+ ****************************************************************************/
 
-#endif /* __APPS_EXAMPLES_SERVER_TCP_PROTOCOL_H */
+int main(int argc, FAR char *argv[])
+{
+  const struct CMUnitTest tests[] =
+  {
+    cmocka_unit_test(test_case_01),
+    cmocka_unit_test(test_case_02),
+  };
+
+  return cmocka_run_group_tests(tests, NULL, NULL);
+}
