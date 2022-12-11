@@ -106,13 +106,8 @@ static const struct cmdmap_s g_cmdmap[] =
 #endif
 
 #if defined(CONFIG_NET) && defined(CONFIG_NET_ARP) && !defined(CONFIG_NSH_DISABLE_ARP)
-#ifdef CONFIG_NETLINK_ROUTE
-  { "arp",      cmd_arp,      2, 4,
-    "[-t|-a <ipaddr>|-d <ipaddr>|-s <ipaddr> <hwaddr>]" },
-#else
-  { "arp",      cmd_arp,      3, 4,
-    "[-a <ipaddr>|-d <ipaddr>|-s <ipaddr> <hwaddr>]" },
-#endif
+  { "arp",      cmd_arp,      1, 6,
+    "[-i <ifname>] [-a <ipaddr>|-d <ipaddr>|-s <ipaddr> <hwaddr>]" },
 #endif
 
 #if defined(CONFIG_NETUTILS_CODECS) && defined(CONFIG_CODECS_BASE64)
@@ -1156,7 +1151,7 @@ int nsh_extmatch_count(FAR char *name, FAR int *matches, int namelen)
     defined(CONFIG_READLINE_HAVE_EXTMATCH)
 FAR const char *nsh_extmatch_getname(int index)
 {
-  DEBUGASSERT(index > 0 && index <= (int)NUM_CMDS);
+  DEBUGASSERT(index > 0 && index <= NUM_CMDS);
   return  g_cmdmap[index].cmd;
 }
 #endif
