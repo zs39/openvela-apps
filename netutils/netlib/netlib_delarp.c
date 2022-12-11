@@ -51,15 +51,13 @@
  *
  * Parameters:
  *   inaddr   The IPv4 address to use in the query
- *   ifname   The Network device name
  *
  * Return:
  *   0 on success; a negated errno value on failure.
  *
  ****************************************************************************/
 
-int netlib_del_arpmapping(FAR const struct sockaddr_in *inaddr,
-                          FAR const char *ifname)
+int netlib_del_arpmapping(FAR const struct sockaddr_in *inaddr)
 {
   int ret = -EINVAL;
 
@@ -72,15 +70,6 @@ int netlib_del_arpmapping(FAR const struct sockaddr_in *inaddr,
 
           memcpy(&req.arp_pa, inaddr, sizeof(struct sockaddr_in));
           memset(&req.arp_ha, 0, sizeof(struct sockaddr_in));
-          if (ifname != NULL)
-            {
-               strlcpy((FAR char *)&req.arp_dev, ifname,
-                       sizeof(req.arp_dev));
-            }
-          else
-            {
-              req.arp_dev[0] = '\0';
-            }
 
           ret = ioctl(sockfd, SIOCDARP, (unsigned long)((uintptr_t)&req));
           if (ret < 0)

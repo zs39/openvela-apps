@@ -53,7 +53,6 @@
  * Parameters:
  *   inaddr   The IPv4 address to use in the mapping
  *   macaddr  The Ethernet MAC address to use in the mapping
- *   ifname   The Network device name
  *
  * Return:
  *   0 on success; a negated errno value on failure.
@@ -61,7 +60,7 @@
  ****************************************************************************/
 
 int netlib_set_arpmapping(FAR const struct sockaddr_in *inaddr,
-                          FAR const uint8_t *macaddr, FAR const char *ifname)
+                          FAR const uint8_t *macaddr)
 {
   int ret = -EINVAL;
 
@@ -76,15 +75,6 @@ int netlib_set_arpmapping(FAR const struct sockaddr_in *inaddr,
 
           req.arp_ha.sa_family = ARPHRD_ETHER;
           memcpy(&req.arp_ha.sa_data, macaddr, ETHER_ADDR_LEN);
-          if (ifname != NULL)
-            {
-               strlcpy((FAR char *)&req.arp_dev, ifname,
-                       sizeof(req.arp_dev));
-            }
-          else
-            {
-              req.arp_dev[0] = '\0';
-            }
 
           ret = ioctl(sockfd, SIOCSARP, (unsigned long)((uintptr_t)&req));
           if (ret < 0)

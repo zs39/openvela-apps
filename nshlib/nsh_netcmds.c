@@ -43,7 +43,6 @@
 #include <assert.h>
 #include <errno.h>
 #include <debug.h>
-#include <getopt.h>
 
 #if defined(CONFIG_LIBC_NETDB) && !defined(CONFIG_NSH_DISABLE_NSLOOKUP)
 #  include <netdb.h>
@@ -369,6 +368,7 @@ static int nsh_foreach_netdev(nsh_netdev_callback_t callback,
                               FAR char *cmd)
 {
   FAR struct dirent *entry;
+  uint8_t flags;
   FAR DIR *dir;
   int ret = OK;
 
@@ -393,7 +393,7 @@ static int nsh_foreach_netdev(nsh_netdev_callback_t callback,
        */
 
       if (entry->d_type == DTYPE_FILE &&
-          strcmp(entry->d_name, "stat") != 0)
+          netlib_getifstatus(entry->d_name, &flags) >= 0)
         {
           /* Performt he callback.  It returns any non-zero value, then
            * terminate the search.
@@ -1038,61 +1038,21 @@ int cmd_nslookup(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
 #if defined(CONFIG_NET_ARP) && !defined(CONFIG_NSH_DISABLE_ARP)
 int cmd_arp(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
 {
-  enum opt_type_e
-  {
-    OPT_TYPE_ARP_LIST,
-    OPT_TYPE_ARP_GET,
-    OPT_TYPE_ARP_DELETE,
-    OPT_TYPE_ARP_SET
-  } opt_type = OPT_TYPE_ARP_LIST;
-
   struct sockaddr_in inaddr;
   struct ether_addr mac;
-  FAR const char *ifname = NULL;
-  int option;
   int ret;
 
   /* Forms:
    *
-   * arp [-i <ifname>]
-   * arp [-i <ifname>] -a <ipaddr>
-   * arp [-i <ifname>] -d <ipdaddr>
-   * arp [-i <ifname>] -s <ipaddr> <hwaddr>
+   * arp -t
+   * arp -a <ipaddr>
+   * arp -d <ipdaddr>
+   * arp -s <ipaddr> <hwaddr>
    */
 
   memset(&inaddr, 0, sizeof(inaddr));
-
-  while ((option = getopt(argc, argv, "adsi:")) != ERROR)
-    {
-      switch (option)
-        {
-          case 'a':
-            opt_type = OPT_TYPE_ARP_GET;
-            break;
-
-          case 'd':
-            opt_type = OPT_TYPE_ARP_DELETE;
-            break;
-
-          case 's':
-            opt_type = OPT_TYPE_ARP_SET;
-            break;
-
-          case 'i':
-            ifname = optarg;
-            break;
-
-          case ':':
-            goto errout_missing;
-
-          case '?':
-          default:
-            goto errout_invalid;
-        }
-    }
-
 #ifdef CONFIG_NETLINK_ROUTE
-  if (opt_type == OPT_TYPE_ARP_LIST)
+  if (strcmp(argv[1], "-t") == 0)
     {
       FAR struct arp_entry_s *arptab;
       size_t arpsize;
@@ -1100,6 +1060,11 @@ int cmd_arp(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
       char ipaddr[16];
       char ethaddr[24];
       int i;
+
+      if (argc != 2)
+        {
+          goto errout_toomany;
+        }
 
       /* Allocate a buffer to hold the ARP table */
 
@@ -1164,22 +1129,22 @@ int cmd_arp(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
     }
   else
 #endif
-  if (opt_type == OPT_TYPE_ARP_GET)
+  if (strcmp(argv[1], "-a") == 0)
     {
       char hwaddr[20];
 
-      if (argc - optind < 1)
+      if (argc != 3)
         {
-          goto errout_missing;
+          goto errout_toomany;
         }
 
       /* Show the corresponding hardware address */
 
       inaddr.sin_family      = AF_INET;
       inaddr.sin_port        = 0;
-      inaddr.sin_addr.s_addr = inet_addr(argv[optind]);
+      inaddr.sin_addr.s_addr = inet_addr(argv[2]);
 
-      ret = netlib_get_arpmapping(&inaddr, mac.ether_addr_octet, ifname);
+      ret = netlib_get_arpmapping(&inaddr, mac.ether_addr_octet);
       if (ret < 0)
         {
           goto errout_cmdfaild;
@@ -1187,35 +1152,35 @@ int cmd_arp(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
 
       nsh_output(vtbl, "HWaddr: %s\n", ether_ntoa_r(&mac, hwaddr));
     }
-  else if (opt_type == OPT_TYPE_ARP_DELETE)
+  else if (strcmp(argv[1], "-d") == 0)
     {
-      if (argc - optind < 1)
+      if (argc != 3)
         {
-          goto errout_missing;
+          goto errout_toomany;
         }
 
       /* Delete the corresponding address mapping from the arp table */
 
       inaddr.sin_family      = AF_INET;
       inaddr.sin_port        = 0;
-      inaddr.sin_addr.s_addr = inet_addr(argv[optind]);
+      inaddr.sin_addr.s_addr = inet_addr(argv[2]);
 
-      ret = netlib_del_arpmapping(&inaddr, ifname);
+      ret = netlib_del_arpmapping(&inaddr);
       if (ret < 0)
         {
           goto errout_cmdfaild;
         }
     }
-  else if (opt_type == OPT_TYPE_ARP_SET)
+  else if (strcmp(argv[1], "-s") == 0)
     {
-      if (argc - optind < 2)
+      if (argc != 4)
         {
           goto errout_missing;
         }
 
       /* Convert the MAC address string to a binary */
 
-      if (!netlib_ethaddrconv(argv[optind + 1], mac.ether_addr_octet))
+      if (!netlib_ethaddrconv(argv[3], mac.ether_addr_octet))
         {
           goto errout_invalid;
         }
@@ -1224,9 +1189,9 @@ int cmd_arp(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
 
       inaddr.sin_family      = AF_INET;
       inaddr.sin_port        = 0;
-      inaddr.sin_addr.s_addr = inet_addr(argv[optind]);
+      inaddr.sin_addr.s_addr = inet_addr(argv[2]);
 
-      ret = netlib_set_arpmapping(&inaddr, mac.ether_addr_octet, ifname);
+      ret = netlib_set_arpmapping(&inaddr, mac.ether_addr_octet);
       if (ret < 0)
         {
           goto errout_cmdfaild;
@@ -1244,7 +1209,7 @@ int cmd_arp(FAR struct nsh_vtbl_s *vtbl, int argc, FAR char **argv)
 errout_cmdfaild:
   if (ret == -ENOENT)
     {
-      nsh_error(vtbl, g_fmtnosuch, argv[0], "ARP entry", argv[optind]);
+      nsh_error(vtbl, g_fmtnosuch, argv[0], "ARP entry", argv[2]);
     }
   else
     {
@@ -1254,6 +1219,10 @@ errout_cmdfaild:
   return ERROR;
 
 errout_missing:
+  nsh_error(vtbl, g_fmttoomanyargs, argv[0]);
+  return ERROR;
+
+errout_toomany:
   nsh_error(vtbl, g_fmtargrequired, argv[0]);
   return ERROR;
 
