@@ -80,11 +80,12 @@ struct fbdev_obj_s
  * Private Functions
  ****************************************************************************/
 
+#if defined(CONFIG_FB_UPDATE)
+
 /****************************************************************************
- * Name: buf_rotate_copy
+ * Name: fbdev_update_area
  ****************************************************************************/
 
-#if defined(CONFIG_FB_UPDATE)
 static void fbdev_update_area(FAR struct fbdev_obj_s *fbdev_obj,
                               FAR const lv_area_t *area_p)
 {
@@ -232,6 +233,39 @@ static void fbdev_refr_start(FAR lv_disp_drv_t *disp_drv)
 {
   FAR struct fbdev_obj_s *fbdev_obj = disp_drv->user_data;
   ioctl(fbdev_obj->fd, FBIO_CLEARNOTIFY, NULL);
+}
+
+/****************************************************************************
+ * Name: fbdev_check_inv_area_covered
+ ****************************************************************************/
+
+static bool fbdev_check_inv_area_covered(FAR lv_disp_t *disp_refr,
+                                         FAR const lv_area_t *area_p)
+{
+  int i;
+
+  for (i = 0; i < disp_refr->inv_p; i++)
+    {
+      FAR const lv_area_t *cur_area;
+
+      /* Skip joined area */
+
+      if (disp_refr->inv_area_joined[i])
+        {
+          continue;
+        }
+
+      cur_area = &disp_refr->inv_areas[i];
+
+      /* Check cur_area is coverd area_p  */
+
+      if (_lv_area_is_in(area_p, cur_area, 0))
+        {
+          return true;
+        }
+    }
+
+  return false;
 }
 
 /****************************************************************************
