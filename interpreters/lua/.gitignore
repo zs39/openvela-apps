@@ -1,4 +1,4 @@
-*.tar.gz
-lua/
+lua-*.tar.gz
+lua-*/
 /luamod_list.h
 /luamod_proto.h
