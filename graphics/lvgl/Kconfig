@@ -59,7 +59,6 @@ config LV_USE_FBDEV_INTERFACE
 config LV_FBDEV_INTERFACE_DEFAULT_DEVICEPATH
 	string "Framebuffer default device path"
 	default "/dev/fb0"
-	depends on LV_USE_FBDEV_INTERFACE
 
 config LV_FBDEV_ENABLE_WAITFORVSYNC
 	bool "Enable wait for vsync support"
@@ -309,7 +308,6 @@ config LV_USE_TOUCHPAD_INTERFACE
 	default n
 
 config LV_TOUCHPAD_INTERFACE_DEFAULT_DEVICEPATH
-	depends on LV_USE_TOUCHPAD_INTERFACE
 	string "Touchpad default device path"
 	default "/dev/input0"
 
