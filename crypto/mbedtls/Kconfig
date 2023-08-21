@@ -82,6 +82,7 @@ config MBEDTLS_CERTS_C
 
 config MBEDTLS_PADLOCK_C
 	bool "Enable VIA Padlock support on x86."
+	depends on X86 || HOST_X86 || (HOST_X86_64 && SIM_M32)
 	default y
 
 config MBEDTLS_TIMING_C
