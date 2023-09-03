@@ -371,7 +371,7 @@ int main(int argc, FAR char *argv[])
   if (ret)
     {
       cu_error("cu_main: ERROR during tcgetattr(): %d\n", errno);
-      goto errout_with_outfd;
+      goto errout_with_devfd;
     }
 
   /* Remember std termios attributes if it is a tty. Try to select
@@ -406,7 +406,7 @@ int main(int argc, FAR char *argv[])
   if (set_termios(cu, nocrlf) != 0)
 #endif
     {
-      goto errout_with_outfd_retrieve;
+      goto errout_with_devfd_retrieve;
     }
 
   /* Start the serial receiver thread */
@@ -415,7 +415,7 @@ int main(int argc, FAR char *argv[])
   if (ret != OK)
     {
       cu_error("cu_main: pthread_attr_init failed: %d\n", ret);
-      goto errout_with_outfd_retrieve;
+      goto errout_with_devfd_retrieve;
     }
 
   /* Set priority of listener to configured value */
@@ -427,19 +427,22 @@ int main(int argc, FAR char *argv[])
   if (ret != 0)
     {
       cu_error("cu_main: Error in thread creation: %d\n", ret);
-      goto errout_with_outfd_retrieve;
+      goto errout_with_devfd_retrieve;
     }
 
   /* Send messages and get responses -- forever */
 
   while (!cu->force_exit)
     {
-      signed char ch = getc(stdin);
+      char ch;
+      int c = getc(stdin);
 
-      if (ch < 0)
+      if (c < 0)
         {
           continue;
         }
+
+      ch = c;
 
       if (nobreak == 1)
         {
@@ -492,9 +495,9 @@ int main(int argc, FAR char *argv[])
 
   /* Error exits */
 
-errout_with_outfd_retrieve:
+errout_with_devfd_retrieve:
   retrieve_termios(cu);
-errout_with_outfd:
+errout_with_devfd:
   close(cu->devfd);
 errout_with_devinit:
   return exitval;
