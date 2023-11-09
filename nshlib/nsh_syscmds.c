@@ -117,8 +117,8 @@ static FAR const char * const g_resetflag[] =
   "panic",
   "bootloader",
   "recovery",
-  "factory",
   "restore",
+  "factory",
   NULL
 };
 #endif
