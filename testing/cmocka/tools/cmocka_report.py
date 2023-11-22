@@ -20,6 +20,8 @@
 ############################################################################
 
 import json
+import os
+import xml.etree.ElementTree as ET
 from enum import Enum
 
 import typer
@@ -29,6 +31,7 @@ from bs4 import BeautifulSoup
 
 class ConvertType(str, Enum):
     XML2JSON = "xml2json"
+    MERGEXML = "merge"
 
 
 class CmockaReport:
@@ -36,7 +39,7 @@ class CmockaReport:
         self.xml = xml
         self.out = out
 
-    def open_xml(self):
+    def xml2dict(self):
         """Parse the XML file and convert it into a dictionary"""
         try:
             with open(self.xml, "r") as f:
@@ -51,7 +54,7 @@ class CmockaReport:
 
     def xml2json(self):
         """Convert XML dictionary into a JSON string"""
-        xml_dict = self.open_xml()
+        xml_dict = self.xml2dict()
         if xml_dict is None:
             return
 
@@ -69,6 +72,31 @@ class CmockaReport:
         else:
             print(json_data)
 
+    def mergexml(self):
+        """Merge multiple XML files into one"""
+        merged = ET.Element("testsuites")
+        for _ in os.listdir(self.xml):
+            if _.endswith(".xml"):
+                try:
+                    tree = ET.parse(os.path.join(self.xml, _))
+                    root = tree.getroot()
+                    merged.extend(list(root))
+                except ET.ParseError as e:
+                    print("Error parsing XML:", _, e)
+                    return
+        if self.out:
+            try:
+                ET.ElementTree(merged).write(
+                    self.out, encoding="UTF-8", xml_declaration=True
+                )
+                print("Job Done")
+            except FileNotFoundError:
+                print("No such file or directory: {0}".format(self.out))
+            except Exception:
+                print("Failed to write json file")
+        else:
+            print(ET.dump(merged))
+
 
 app = typer.Typer()
 
@@ -78,18 +106,23 @@ def main(
     operate: ConvertType = typer.Option(
         default=ConvertType.XML2JSON, help="operation type"
     ),
-    xml: str = typer.Option(default=None, help="where is the xml file"),
+    xml: str = typer.Option(default=None, help="where is the xml file or xml dir"),
     out: str = typer.Option(default=None, help="write to output instead of stdout"),
 ):
     """
-    :param operate: operation type
-    :param xml: where where xml file
-    :param out: write to output instead of stdout
-    :return:
+    :param operate: operation type\n
+    :param xml: where where xml file\n
+    :param out: write to output instead of stdout\n
     """
+    if xml is None:
+        raise typer.BadParameter("Please provide xml file or xml dir")
     rpt = CmockaReport(xml, out)
     if operate == ConvertType.XML2JSON:
         rpt.xml2json()
+    elif operate == ConvertType.MERGEXML:
+        rpt.mergexml()
+    else:
+        pass
 
 
 if __name__ == "__main__":
