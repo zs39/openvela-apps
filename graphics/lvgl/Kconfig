@@ -95,6 +95,11 @@ config LV_VG_LITE_GPU_INIT
 	depends on LV_USE_DRAW_VG_LITE
 	default y
 
+config LV_GPU_G2D_INCLUDE_PATH
+	string "include path of G2D header"
+	depends on LV_USE_DRAW_G2D
+	default ""
+
 menuconfig LV_USE_GPU_INTERFACE
 	bool "GPU acceleration interface"
 	default n

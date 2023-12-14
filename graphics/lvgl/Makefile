@@ -71,6 +71,10 @@ CFLAGS += "-DLV_PROFILER_BEGIN=sched_note_begin(NOTE_TAG_ALWAYS)"
 CFLAGS += "-DLV_PROFILER_END=sched_note_end(NOTE_TAG_ALWAYS)"
 endif
 
+ifneq ($(CONFIG_LV_GPU_G2D_INCLUDE_PATH),)
+CFLAGS += "-I$(addprefix $(strip $(INCDIR_PREFIX))$(APPDIR)/../,$(CONFIG_LV_GPU_G2D_INCLUDE_PATH))"
+endif
+
 ifeq ($(CONFIG_DEBUG_CUSTOMOPT),y)
   ./lvgl/src/misc/lv_mem.c_CFLAGS += -O2
 endif
