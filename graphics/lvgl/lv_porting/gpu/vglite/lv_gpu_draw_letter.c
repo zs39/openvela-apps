@@ -313,7 +313,7 @@ static lv_res_t draw_letter_normal(lv_draw_ctx_t* draw_ctx, const lv_draw_label_
     VG_LITE_ASSERT_BUFFER(&dest_vg_buf);
     VG_LITE_ASSERT_PATH(&outline->path);
     CHECK_ERROR(vg_lite_draw(
-        &dest_vg_buf, &outline->path, VG_LITE_FILL_EVEN_ODD,
+        &dest_vg_buf, &outline->path, VG_LITE_FILL_NON_ZERO,
         &matrix, VG_LITE_BLEND_SRC_OVER, vg_color_make(dsc->color, dsc->opa)));
     CHECK_ERROR(gpu_flush());
 
