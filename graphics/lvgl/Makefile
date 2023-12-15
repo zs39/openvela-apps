@@ -54,11 +54,6 @@ ifneq ($(CONFIG_LVX_USE_QRSCAN),)
 CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/external/quirc/quirc/lib
 endif
 
-ifneq ($(CONFIG_LV_ATTRIBUTE_FAST_MEM_CUSTOM_SECTION_NAME), "")
-CFLAGS   += "-DLV_ATTRIBUTE_FAST_MEM=__attribute__((section(CONFIG_LV_ATTRIBUTE_FAST_MEM_CUSTOM_SECTION_NAME)))"
-CXXFLAGS += "-DLV_ATTRIBUTE_FAST_MEM=__attribute__((section(CONFIG_LV_ATTRIBUTE_FAST_MEM_CUSTOM_SECTION_NAME)))"
-endif
-
 ifneq ($(CONFIG_LV_ASSERT_HANDLER_INCLUDE), "")
 CFLAGS += "-DLV_ASSERT_HANDLER=ASSERT(0);"
 endif
@@ -74,10 +69,6 @@ endif
 
 ifneq ($(CONFIG_LV_GPU_G2D_INCLUDE_PATH),)
 CFLAGS += "-I$(addprefix $(strip $(INCDIR_PREFIX))$(APPDIR)/../,$(CONFIG_LV_GPU_G2D_INCLUDE_PATH))"
-endif
-
-ifeq ($(CONFIG_DEBUG_CUSTOMOPT),y)
-  ./lvgl/src/misc/lv_mem.c_CFLAGS += -O2
 endif
 
 ifeq ($(CONFIG_LV_USE_DRAW_VG_LITE),y)
