@@ -48,12 +48,12 @@
 
 #ifdef TEST_CPUFREQ_FAKE_DRIVER
 static FAR const struct cpufreq_frequency_table *test_cpufreq_get_table(
-                            FAR struct cpufreq_driver *driver);
-static int test_cpufreq_target_index(FAR struct cpufreq_driver *driver,
+                            FAR struct cpufreq_policy *policy);
+static int test_cpufreq_target_index(FAR struct cpufreq_policy *policy,
                                      unsigned int index);
-static int test_cpufreq_get_frequency(FAR struct cpufreq_driver *driver);
-static int test_cpufreq_suspend(FAR struct cpufreq_driver *driver);
-static int test_cpufreq_resume(FAR struct cpufreq_driver *driver);
+static int test_cpufreq_get_frequency(FAR struct cpufreq_policy *policy);
+static int test_cpufreq_suspend(FAR struct cpufreq_policy *policy);
+static int test_cpufreq_resume(FAR struct cpufreq_policy *policy);
 
 /****************************************************************************
  * Private Data
@@ -85,12 +85,12 @@ static struct cpufreq_driver g_test_cpufreq_driver =
  ****************************************************************************/
 
 static FAR const struct cpufreq_frequency_table *test_cpufreq_get_table(
-                            FAR struct cpufreq_driver *driver)
+                            FAR struct cpufreq_policy *policy)
 {
   return g_test_cpufreq_table;
 }
 
-static int test_cpufreq_target_index(FAR struct cpufreq_driver *driver,
+static int test_cpufreq_target_index(FAR struct cpufreq_policy *policy,
                                      unsigned int index)
 {
   DEBUGASSERT(index >= 0 && index < ARRAY_SIZE(g_test_cpufreq_table));
@@ -99,17 +99,17 @@ static int test_cpufreq_target_index(FAR struct cpufreq_driver *driver,
   return 0;
 }
 
-static int test_cpufreq_get_frequency(FAR struct cpufreq_driver *driver)
+static int test_cpufreq_get_frequency(FAR struct cpufreq_policy *policy)
 {
   return g_test_cpufreq_current;
 }
 
-static int test_cpufreq_suspend(FAR struct cpufreq_driver *driver)
+static int test_cpufreq_suspend(FAR struct cpufreq_policy *policy)
 {
   return 0;
 }
 
-static int test_cpufreq_resume(FAR struct cpufreq_driver *driver)
+static int test_cpufreq_resume(FAR struct cpufreq_policy *policy)
 {
   return 0;
 }
