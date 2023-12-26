@@ -64,4 +64,8 @@ config INTERPRETERS_QUICKJS_CONFIG_TOOL
 	---help---
 		Enable this if you want js config tool support.
 
+config INTERPRETERS_QUICKJS_EXPORT_API
+	bool "Export API to WAMR"
+	default n
+
 endif # INTERPRETERS_QUICKJS
