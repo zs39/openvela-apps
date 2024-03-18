@@ -25,10 +25,33 @@
 #include <nuttx/config.h>
 #include <unistd.h>
 
-#include <lvgl/lvgl.h>
+#include <sys/boardctl.h>
+
+#include <lvgl.h>
 #include <lvgl/demos/lv_demos.h>
 #ifdef CONFIG_LV_USE_NUTTX_LIBUV
 #include <uv.h>
+#endif
+
+/****************************************************************************
+ * Pre-processor Definitions
+ ****************************************************************************/
+
+/* Should we perform board-specific driver initialization? There are two
+ * ways that board initialization can occur:  1) automatically via
+ * board_late_initialize() during bootupif CONFIG_BOARD_LATE_INITIALIZE
+ * or 2).
+ * via a call to boardctl() if the interface is enabled
+ * (CONFIG_BOARDCTL=y).
+ * If this task is running as an NSH built-in application, then that
+ * initialization has probably already been performed otherwise we do it
+ * here.
+ */
+
+#undef NEED_BOARDINIT
+
+#if defined(CONFIG_BOARDCTL) && !defined(CONFIG_NSH_ARCHINIT)
+#  define NEED_BOARDINIT 1
 #endif
 
 /****************************************************************************
@@ -87,6 +110,13 @@ int main(int argc, FAR char *argv[])
 
 #ifdef CONFIG_LV_USE_NUTTX_LIBUV
   uv_loop_t ui_loop;
+#endif
+
+#ifdef NEED_BOARDINIT
+  /* Perform board-specific driver initialization */
+
+  boardctl(BOARDIOC_INIT, 0);
+
 #endif
 
   lv_init();
