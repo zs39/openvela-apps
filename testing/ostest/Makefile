@@ -78,7 +78,7 @@ ifneq ($(CONFIG_TLS_NELEM),0)
 CSRCS += specific.c
 endif
 
-ifneq ($(CONFIG_TLS_NCLEANUP),0)
+ifneq ($(CONFIG_PTHREAD_CLEANUP_STACKSIZE),0)
 CSRCS += pthread_cleanup.c
 endif
 
@@ -124,7 +124,7 @@ CSRCS += sigev_thread.c
 endif
 endif
 
-ifeq ($(CONFIG_ARCH_HAVE_VFORK),y)
+ifeq ($(CONFIG_ARCH_HAVE_FORK),y)
 ifeq ($(CONFIG_SCHED_WAITPID),y)
 CSRCS += vfork.c
 endif
