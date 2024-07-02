@@ -23,7 +23,6 @@ include $(APPDIR)/Make.defs
 SRC_PATH := openh264
 
 INCLUDES += \
-    -I$(CURDIR)/include \
     -I$(SRC_PATH)/codec/api/wels \
     -I$(SRC_PATH)/codec/common/inc \
     -Icodec/common/inc
@@ -103,6 +102,9 @@ DECODER_ASM_SRCS += \
 
 CXXFLAGS += $(INCLUDES) $(DECODER_INCLUDES)
 CXXFLAGS += -Wno-unused-variable -Wno-shadow -lstdc++
+ifndef HAVE_SYSCTLBYNAME
+CXXFLAGS += -D'sysctlbyname(name, oldp, oldlenp, newp, newlen)=-1'
+endif
 
 CXXEXT   = .cpp
 CXXSRCS += $(COMMON_CPP_SRCS) $(DECODER_CPP_SRCS)
