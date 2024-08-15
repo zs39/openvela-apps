@@ -76,7 +76,6 @@ The following table summarizes the code size measurements for different componen
 
 ### Code Size Measurements
 
-| ---------------------|---------|---------|---------|--------|
 | **Component**        | **Text** | **Data** | **BSS** | **DEC** |
 | ---------------------|---------|---------|---------|--------|
 | basic c++            | 3712    | 0       | 128     | 3840   |
@@ -104,7 +103,6 @@ The following table summarizes the code size measurements for different componen
 | unordered_set        | 46452   | 308     | 40      | 46800  |
 | vector               | 41444   | 308     | 40      | 41792  |
 | weak_ptr             | 43460   | 308     | 40      | 41936  |
-| ---------------------|---------|---------|---------|--------|
 
 ## Conclusion
 
