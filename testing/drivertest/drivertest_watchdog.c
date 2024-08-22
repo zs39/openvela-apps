@@ -486,6 +486,10 @@ static void test_case_wdog_04(FAR void **state)
       assert_return_code(ret, OK);
     }
 
+  /* Prevent the os entering pm then turn off watchdog. */
+
+  up_udelay(2 * wdg_state->timeout * 1000);
+
   /* Test capture. */
 
   ret = sem_init(&g_semaphore, 0, 0);
