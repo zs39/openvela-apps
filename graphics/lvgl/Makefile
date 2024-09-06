@@ -86,4 +86,9 @@ CFLAGS += ${INCDIR_PREFIX}$(APPDIR)/../$(CONFIG_LV_DRAW_VG_LITE_INCLUDE)
 $(CURDIR)/lvgl/src/draw/vg_lite/lv_vg_lite_path.c_CFLAGS += -O0
 endif
 
+ifneq ($(CONFIG_LV_OPTLEVEL), "")
+CFLAGS   += $(CONFIG_LV_OPTLEVEL)
+CXXFLAGS += $(CONFIG_LV_OPTLEVEL)
+endif
+
 include $(APPDIR)/Application.mk

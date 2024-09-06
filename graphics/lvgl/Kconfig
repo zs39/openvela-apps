@@ -28,4 +28,8 @@ config LV_GPU_G2D_INCLUDE_PATH
 	depends on LV_USE_DRAW_G2D
 	default ""
 
+config LV_OPTLEVEL
+	string "Customize compilation optimization level"
+	default ""
+
 endif # GRAPHICS_LVGL
