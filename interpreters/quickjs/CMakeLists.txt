@@ -129,6 +129,7 @@ if(CONFIG_INTERPRETERS_QUICKJS)
       ${QUICKAPP_COMMON_INCLUDES}
       ${QUICKAPP_DIR}/src/jse/quickjs
       ${QUICKAPP_DIR}/src/jse
+      ${QUICKAPP_DIR}/src/framework
       ${QUICKAPP_DIR}/src
       SRCS
       ${QUICKAPP_DIR}/src/ajs_compile.cpp
