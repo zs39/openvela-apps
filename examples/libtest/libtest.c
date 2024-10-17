@@ -22,7 +22,7 @@
  * Included Files
  ****************************************************************************/
 
-#include <nuttx/config.h>
+#include <nuttx/compiler.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -36,7 +36,7 @@
 
 void library_test(void)
 {
-  int *p = malloc(sizeof(int));
+  FAR int *p = malloc(sizeof(int));
   if (p == NULL)
     {
       printf("libtest failed to allocate memory\n");
